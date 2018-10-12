@@ -5,7 +5,7 @@ from PIL import Image
 face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
 def detect(gray, frame):
     roi_gray=0
-    faces = face_cascade.detectMultiScale(gray, 1.2, 5)
+    faces = face_cascade.detectMultiScale(gray, 1.0, 5)
     for (x, y, w, h) in faces:
         cv2.rectangle(frame, (x, y), (x+w, y+h), (255, 0, 0), 2)
         roi_gray = gray[y:y+h, x:x+w]
@@ -20,6 +20,7 @@ while(cap.isOpened()):
     ret, frame = cap.read()
     if ret==True:
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        
         frame,roi_gray = detect(gray,gray)
         if type(roi_gray)!=int:
                 roi_gray = Image.fromarray(roi_gray)
@@ -43,7 +44,7 @@ data={}
 #initsializeasd
 data["label"]=[]
 for i in range(len(lis)):
-    data["label"].append(11)
+    data["label"].append(69)
 for i in range(len(lis)):
     for j in range(784):#len(lis[0])
         data["pixel{}" .format(j+1)]=[]
@@ -64,6 +65,7 @@ def create_face_from_video(filename):
         ret, frame = cap.read()
         if ret==True:
             gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+            gray = ndimage.rotate(gray,90)
             frame,roi_gray = detect(gray,gray)
             if type(roi_gray)!=int:
                     roi_gray = Image.fromarray(roi_gray)
@@ -98,5 +100,5 @@ def create_face_from_video(filename):
     
         
     x = pd.DataFrame(data)
-    x.to_csv("fromvideotrial.csv")
+    x.to_csv("guju.csv")
     
