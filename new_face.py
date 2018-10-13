@@ -2,12 +2,12 @@ import cv2
 import numpy as np
 from PIL import Image
 import pandas as pd
+import os.path
 from imutils.video import FPS
 
 # Loading the cascades
 face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
 #smile_cascade = cv2.CascadeClassifier('haarcascade_smile.xml')
-
 # Defining a function that will do the detections
 def detect(gray, frame):
     roi_gray=0
@@ -20,6 +20,19 @@ def detect(gray, frame):
         #cv2.imshow("rando",roi_color)
     return frame,roi_gray
 def create_face():
+    name=str(input("Enter the name of the Person: "))
+    
+    try :
+        dic=np.load("real_dic.npy").item()
+        for i in dic:
+            if dic[i]==name:
+                print("This Name is Already there ")
+                return "Thenga"
+        dic[max(dic)+1]=name
+    except FileNotFoundError:
+        dic={}
+        dic[10]=name
+    
     font                   = cv2.FONT_HERSHEY_SIMPLEX
     bottomLeftCornerOfText = (10,50)
     fontScale              = 1
@@ -28,7 +41,6 @@ def create_face():
     frames=0
     frames_add=0
     lis_img=[]
-    temp_img=[0]
     video = cv2.VideoCapture(0)
     fps=FPS().start()
     ret = True
@@ -54,6 +66,7 @@ def create_face():
             break
         fps.update()
         if cv2.waitKey(1) & 0xFF == ord('q'):
+            video.release()
             break
     fps.stop()
     print("fps : {}".format(frames/fps.elapsed()))
@@ -71,7 +84,7 @@ def create_face():
     #initsialize
     data["label"]=[]
     for i in range(len(lis)):
-        data["label"].append(10)
+        data["label"].append(max(dic)+1)
     for i in range(len(lis)):
         for j in range(784):#len(lis[0])
             data["pixel{}" .format(j+1)]=[]
@@ -83,7 +96,17 @@ def create_face():
         
     x = pd.DataFrame(data)
     print("Succesfully added {} frames.".format(len(x)))
-    x.to_csv("ratinnew.csv")
+    choice=int(input("Enter one to save: "))
+    if choice==1:
+        print("saving")
+        if os.path.isfile(name+"1.csv"):
+            print("file with this names exists.EXITING!!!")
+            return
+        x.to_csv(name+"1.csv")
+        print("saved as {}.csv".format(name))
+        print("has key: {}".format(max(dic)+1))
+        np.save("real_dic",dic)
+        return
     
 create_face()
     

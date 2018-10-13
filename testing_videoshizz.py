@@ -13,7 +13,7 @@ import numpy as np
 import pandas as pd
 from keras.models import load_model
 
-cnn_model = load_model("my_model.h5")
+cnn_model = load_model("me_mom_shibu.h5")
 
 # Loading the cascades
 face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
@@ -39,14 +39,14 @@ def detect(gray, frame):
                     k=i
                     break
             if k==10:#add nos of pictures captured and time eta and time remaining.
-                name="mom"
-            elif k==11:
                 name="rat"
-            #elif k==11:
-                #name="Mami"
+            elif k==11:
+                name="mom"
+            elif k==12:
+                name="shibu"
             else:
                 name="nothing"
-            cv2.putText(frame,name,(x,y),cv2.FONT_HERSHEY_SIMPLEX , 0.5,(255,255,255),2,cv2.LINE_AA)
+            cv2.putText(frame,name+"{0:.4f}%".format(float(pred[i])),(x,y),cv2.FONT_HERSHEY_SIMPLEX , 0.5,(255,255,255),2,cv2.LINE_AA)
 
     return frame,roi_gray
 

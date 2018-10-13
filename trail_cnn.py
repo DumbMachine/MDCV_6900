@@ -11,19 +11,36 @@ from sklearn.model_selection import train_test_split
 from PIL import Image
 import cv2
 
-batch_size = 128
-num_classes = 2
-epochs = 30
 
 
-df = pd.read_csv("auto7000.csv")
+df = pd.read_csv("ratin_last.csv")
+df_shibu = pd.read_csv("shibu1.csv")
+new_df = pd.read_csv("mami1.csv")
+
+new_df.drop("Unnamed: 0",axis=1,inplace=True)
+df_shibu.drop("Unnamed: 0",axis=1,inplace=True)
 df.drop("Unnamed: 0",axis=1,inplace=True)
-train_7000 = df.iloc[:-1500,:]
-test_7000 = df.iloc[-1500:,:]
+
+x=pd.Series([11 for _ in range(5500)])
+y=pd.Series([12 for _ in range(5599)])
+df_shibu["label"]=y
+new_df["label"]=x
+length = len(new_df)
+train_len=int(length*0.8)
+#df_mom = pd.read_csv("ratin.csv")
+#df_mom.drop("Unnamed: 0",axis=1,inplace=True)
+train_mom=new_df.iloc[:train_len,:]
+train_shibu=df_shibu.iloc[:train_len,:]
+train_ratin=df.iloc[:train_len,:]
+
+test_ratin = df.iloc[train_len:,:]
+test_shibu = df_shibu.iloc[train_len:,:]
+test_mom = new_df.iloc[train_len:,:]
+
 train_df = pd.read_csv("fashion-mnist_train.csv")
 test_df=pd.read_csv("fashion-mnist_test.csv")
-train =[train_7000,train_df]
-test = [test_7000,test_df]
+train =[train_mom,train_df,train_ratin,train_shibu]
+test = [test_ratin,test_shibu,test_df,test_mom]
 train_data = pd.concat(train)
 test_data = pd.concat(test)
 
@@ -35,7 +52,7 @@ y_test = test_data.iloc[:, 0].values
 
 
 x_train, x_validate, y_train, y_validate = train_test_split(
-    x_train, y_train, test_size=0.2, random_state=12345,
+    x_train, y_train, test_size=0.2,
 )
 
 image = x_train[50, :].reshape((28, 28))
@@ -46,7 +63,7 @@ plt.show()
 
 im_rows = 28
 im_cols = 28
-batch_size = 214
+batch_size = 128
 im_shape = (im_rows, im_cols, 1)
 
 x_train = x_train.reshape(x_train.shape[0], *im_shape)
@@ -64,7 +81,7 @@ cnn_model = Sequential([
     
     Flatten(),
     Dense(32, activation='relu'),
-    Dense(11, activation='softmax')
+    Dense(13, activation='softmax')
 ])
 
 cnn_model.compile(
@@ -73,10 +90,10 @@ cnn_model.compile(
     metrics=['accuracy']
 )
 cnn_model.fit(
-    x_train, y_train, batch_size=batch_size,
-    epochs=10, verbose=1,
-    validation_data=(x_validate, y_validate),
-)
+        x_train, y_train, batch_size=batch_size,
+        epochs=10, verbose=1,
+        validation_data=(x_validate, y_validate),
+    )
 
 score = cnn_model.evaluate(x_test, y_test, verbose=0)
 
@@ -86,9 +103,9 @@ print(' test acc: {:.4f}'.format(score[1]))
 #Saving The Model
 from keras.models import load_model
 
-cnn_model.save("my_model.h5")
+cnn_model.save("me_mom_shibu.h5")
 del cnn_model
-
+'''
 cnn_model = load_model("my_model.h5")
 
 #predicting from a value
@@ -122,3 +139,4 @@ while ret == True:
 video.release()
 cv2.destroyAllWindows()
 
+'''
