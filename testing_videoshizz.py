@@ -6,7 +6,7 @@ Created on Wed Oct 10 22:52:39 2018
 """
 
 # Face Recognition
-
+'''since in this technique most of the faces are similar for the particular person can we use one datapoint as 2 and double the dataset for a person'''
 import cv2
 from PIL import Image
 import numpy as np
@@ -38,10 +38,14 @@ def detect(gray, frame):
                 if pred[i]==max(pred):
                     k=i
                     break
-            if k==10:
-                name="senpai"
+            if k==10:#add nos of pictures captured and time eta and time remaining.
+                name="mom"
+            elif k==11:
+                name="rat"
+            #elif k==11:
+                #name="Mami"
             else:
-                name="NotSenpai"
+                name="nothing"
             cv2.putText(frame,name,(x,y),cv2.FONT_HERSHEY_SIMPLEX , 0.5,(255,255,255),2,cv2.LINE_AA)
 
     return frame,roi_gray
